@@ -5,7 +5,7 @@ This is a simple project I use when I need to do some experiment on some js or c
 ### To install
 
 ```bash
-git clone https://github.com/MadeOnMars/Express-boilerplate.git myApp
+git clone https://github.com/maxemileffort/Express-boilerplate.git myApp
 cd myApp
 npm install
 node server.js
