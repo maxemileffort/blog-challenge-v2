@@ -4,24 +4,14 @@ const morgan = require("morgan");
 const app = express();
 app.use(express.json());
 
-const shoppingListRouter = require("./shoppingListRouter");
-const recipesRouter = require("./recipesRouter");
-
 // log the http layer
 app.use(morgan("common"));
 
 app.use(express.static("public"));
 
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/views/index.html");
+  res.sendFile(__dirname + "/public/index.html");
 });
-
-// when requests come into `/shopping-list` or
-// `/recipes`, we'll route them to the express
-// router instances we've imported. Remember,
-// these router instances act as modular, mini-express apps.
-app.use("/shopping-list", shoppingListRouter);
-app.use("/recipes", recipesRouter);
 
 // both runServer and closeServer need to access the same
 // server object, so we declare `server` here, and then when
