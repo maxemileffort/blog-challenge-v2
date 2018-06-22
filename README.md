@@ -1,6 +1,6 @@
 ## Ultra simple Express boilerplate
 
-This is a simple project I use when I need to do some experiment on some js or css.
+This is a simple project I use when I need a quick express skeleton with mongodb functionality.
 
 ### To install
 
