@@ -10,3 +10,4 @@ cd myApp
 npm install
 node server.js
 ```
+server, models, and config files will require some editing before running ```node server.js``` 
