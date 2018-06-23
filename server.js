@@ -10,17 +10,16 @@ mongoose.Promise = global.Promise;
 // config.js is where we control constants for entire
 // app like PORT and DATABASE_URL
 const { PORT, DATABASE_URL } = require('./config');
-const { BlogPost } = require('./models')
+const { Post } = require('./models')
 
 const app = express();
 app.use(express.json());
 
 // GET requests to posts 
 app.get('/posts', (req, res) => {
-  BlogPost
+  Post
     .find()
-    .limit(3)
-    .then(posts=>{
+    .then(posts =>{
       res.json(
         {posts: posts.map(
           (post)=>post.serialize())}
@@ -34,7 +33,7 @@ app.get('/posts', (req, res) => {
 
 // can also request by ID
 app.get('/posts/:id', (req, res) => {
-  BlogPost
+  Post
     .findById(req.params.id)
     .then(post => res.json(
       post.serialize()
@@ -47,7 +46,6 @@ app.get('/posts/:id', (req, res) => {
 
 
 app.post('/posts', (req, res) => {
-  // *** rewrite requiredFields ***
   const requiredFields = ['title', 'author', 'content'];
   for (let i = 0; i < requiredFields.length; i++) {
     const field = requiredFields[i];
@@ -58,7 +56,13 @@ app.post('/posts', (req, res) => {
     }
   }
 
-  BlogPost
+  Post
+    .create({
+      title: req.body.title,
+      author: req.body.author,
+      content: req.body.content,
+    })
+    .then(post=>res.status(201).json(post.serialize()))
       .catch(err => {
       console.error(err);
       res.status(500).json({ message: 'Internal server error' });
@@ -68,7 +72,7 @@ app.post('/posts', (req, res) => {
 
 app.put('/posts/:id', (req, res) => {
   // ensure that the id in the request path and the one in request body match
-  if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+  if (!(req.params.id && req.body.id === req.body.id)) {
     const message = (
       `Request path id (${req.params.id}) and request body id ` +
       `(${req.body.id}) must match`);
@@ -80,8 +84,7 @@ app.put('/posts/:id', (req, res) => {
   // if the user sent over any of the updatableFields, we udpate those values
   // in document
   const toUpdate = {};
-  //*** rewrite updateableFields ***
-  const updateableFields = ['name', 'borough', 'cuisine', 'address'];
+  const updateableFields = ['title', 'author', 'content'];
 
   updateableFields.forEach(field => {
     if (field in req.body) {
@@ -89,17 +92,17 @@ app.put('/posts/:id', (req, res) => {
     }
   });
 
-  BlogPost
+  Post
       // all key/value pairs in toUpdate will be updated -- that's what `$set` does
     .findByIdAndUpdate(req.params.id, { $set: toUpdate })
-    .then(restaurant => res.status(204).end())
+    .then(post => res.status(204).end())
     .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
 
-app.delete('/:id', (req, res) => {
-  BlogPost
+app.delete('/posts/:id', (req, res) => {
+  Post
     .findByIdAndRemove(req.params.id)
-    .then(restaurant => res.status(204).end())
+    .then(post => res.status(204).end())
     .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
 
