@@ -10,15 +10,23 @@ mongoose.Promise = global.Promise;
 // config.js is where we control constants for entire
 // app like PORT and DATABASE_URL
 const { PORT, DATABASE_URL } = require('./config');
-const { BlogPosts } = require('./models')
+const { BlogPost } = require('./models')
 
 const app = express();
 app.use(express.json());
 
-// GET requests to <schema name> 
+// GET requests to posts 
 app.get('/posts', (req, res) => {
-  BlogPosts
-      .catch(err => {
+  BlogPost
+    .find()
+    .limit(3)
+    .then(posts=>{
+      res.json(
+        {posts: posts.map(
+          (post)=>post.serialize())}
+      )
+    })
+    .catch(err => {
       console.error(err);
       res.status(500).json({ message: 'Internal server error' });
     });
@@ -26,8 +34,12 @@ app.get('/posts', (req, res) => {
 
 // can also request by ID
 app.get('/posts/:id', (req, res) => {
-  BlogPosts
-      .catch(err => {
+  BlogPost
+    .findById(req.params.id)
+    .then(post => res.json(
+      post.serialize()
+    ))
+    .catch(err => {
       console.error(err);
       res.status(500).json({ message: 'Internal server error' });
     });
@@ -36,7 +48,7 @@ app.get('/posts/:id', (req, res) => {
 
 app.post('/posts', (req, res) => {
   // *** rewrite requiredFields ***
-  const requiredFields = ['name', 'borough', 'cuisine'];
+  const requiredFields = ['title', 'author', 'content'];
   for (let i = 0; i < requiredFields.length; i++) {
     const field = requiredFields[i];
     if (!(field in req.body)) {
@@ -46,7 +58,7 @@ app.post('/posts', (req, res) => {
     }
   }
 
-  BlogPosts
+  BlogPost
       .catch(err => {
       console.error(err);
       res.status(500).json({ message: 'Internal server error' });
@@ -77,7 +89,7 @@ app.put('/posts/:id', (req, res) => {
     }
   });
 
-  BlogPosts
+  BlogPost
       // all key/value pairs in toUpdate will be updated -- that's what `$set` does
     .findByIdAndUpdate(req.params.id, { $set: toUpdate })
     .then(restaurant => res.status(204).end())
@@ -85,7 +97,7 @@ app.put('/posts/:id', (req, res) => {
 });
 
 app.delete('/:id', (req, res) => {
-  BlogPosts
+  BlogPost
     .findByIdAndRemove(req.params.id)
     .then(restaurant => res.status(204).end())
     .catch(err => res.status(500).json({ message: 'Internal server error' }));

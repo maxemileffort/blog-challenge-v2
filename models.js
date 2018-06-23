@@ -2,8 +2,8 @@
 
 const mongoose = require('mongoose');
 
-// this is our schema to represent a restaurant
-const blogPostsSchema = mongoose.Schema({
+// this is our schema to represent a blog post
+const blogPostSchema = mongoose.Schema({
   title: {type: String, required: true},
   author: {
     firstName: String,
@@ -17,13 +17,13 @@ const blogPostsSchema = mongoose.Schema({
 // properties that are stored in the database. Here we use it
 // to generate a human readable string based on the address object
 // we're storing in Mongo.
-blogPostsSchema.virtual('nameString').get(function() {
+blogPostSchema.virtual('nameString').get(function() {
   return `${this.author.firstName} ${this.author.lastName}`.trim()});
 
 // this is an *instance method* which will be available on all instances
 // of the model. This method will be used to return an object that only
 // exposes *some* of the fields we want from the underlying data
-blogPostsSchema.methods.serialize = function() {
+blogPostSchema.methods.serialize = function() {
 
   return {
     id: this._id,
@@ -35,6 +35,6 @@ blogPostsSchema.methods.serialize = function() {
 
 // note that all instance methods and virtual properties on our
 // schema must be defined *before* we make the call to `.model`.
-const BlogPosts = mongoose.model('BlogPosts', blogPostsSchema);
+const BlogPost = mongoose.model('BlogPost', blogPostSchema);
 
-module.exports = {BlogPosts};
+module.exports = {BlogPost};
