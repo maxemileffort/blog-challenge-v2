@@ -10,31 +10,31 @@ mongoose.Promise = global.Promise;
 // config.js is where we control constants for entire
 // app like PORT and DATABASE_URL
 const { PORT, DATABASE_URL } = require('./config');
-const { /*insert schema name here*/ } = require('./models')
+const { BlogPosts } = require('./models')
 
 const app = express();
 app.use(express.json());
 
 // GET requests to <schema name> 
-app.get('/', (req, res) => {
- //do stuff
-    .catch(err => {
+app.get('/posts', (req, res) => {
+  BlogPosts
+      .catch(err => {
       console.error(err);
       res.status(500).json({ message: 'Internal server error' });
     });
 });
 
 // can also request by ID
-app.get('/:id', (req, res) => {
-  //do stuff
-    .catch(err => {
+app.get('/posts/:id', (req, res) => {
+  BlogPosts
+      .catch(err => {
       console.error(err);
       res.status(500).json({ message: 'Internal server error' });
     });
 });
 
 
-app.post('/', (req, res) => {
+app.post('/posts', (req, res) => {
   // *** rewrite requiredFields ***
   const requiredFields = ['name', 'borough', 'cuisine'];
   for (let i = 0; i < requiredFields.length; i++) {
@@ -46,15 +46,15 @@ app.post('/', (req, res) => {
     }
   }
 
-  //do stuff
-    .catch(err => {
+  BlogPosts
+      .catch(err => {
       console.error(err);
       res.status(500).json({ message: 'Internal server error' });
     });
 });
 
 
-app.put('/:id', (req, res) => {
+app.put('/posts/:id', (req, res) => {
   // ensure that the id in the request path and the one in request body match
   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
     const message = (
@@ -77,15 +77,15 @@ app.put('/:id', (req, res) => {
     }
   });
 
-  <schema name here>
-    // all key/value pairs in toUpdate will be updated -- that's what `$set` does
+  BlogPosts
+      // all key/value pairs in toUpdate will be updated -- that's what `$set` does
     .findByIdAndUpdate(req.params.id, { $set: toUpdate })
     .then(restaurant => res.status(204).end())
     .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
 
 app.delete('/:id', (req, res) => {
-  <schema name here>
+  BlogPosts
     .findByIdAndRemove(req.params.id)
     .then(restaurant => res.status(204).end())
     .catch(err => res.status(500).json({ message: 'Internal server error' }));
